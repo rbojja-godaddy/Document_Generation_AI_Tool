@@ -1,0 +1,3 @@
+gd_gocaas_python
+requests
+python-dotenv
