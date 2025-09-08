@@ -90,18 +90,26 @@ Analyze the provided repository files and produce a Confluence-ready document wi
 1. Process Overview – 2–4 paragraphs summarizing purpose, data flow, main logic, and outputs.
 2. Detailed Steps – ordered list of processing logic, SQL transformations, Python functions, dependencies, and business rules.
 3. Input Tables – Present as a bulleted list in this format: * database.tablename
+    - One table per line, starting with "* ".
+    - Remove single quotes around input tables.
+    - Do not include this string "Database.TableName" in the list.
 4. Output Table Schema – from DDL files, table: Column Name | Data Type | Description.
+    + Use the DDL description if available, but expand it into a clear explanation including the column's purpose, meaning, and typical values.
+    + Do NOT include data lineage information here; data lineage should be described separately in the Data Lineage section.
+    + If no description exists, infer a detailed one from context in repo files.
 5. Data Lineage – mapping of each output column to source columns/tables and transformations.
-6. Dependencies & Scheduling – external sources, APIs, libraries, run triggers.
-7. Error Handling & Logging – handling of failures and logging.
-8. Do NOT include data lineage in Output Table Schema (goes in Data Lineage section).
+6. Dependencies & Scheduling – describe external sources, APIs, libraries, and run triggers.
+7. Error Handling & Logging – describe handling of failures and logging.
+8. Do NOT include data lineage in Output Table Schema; data lineage goes in its own section.
+9. Do not include formatting rules in response_content
 
 Formatting rules:
-- Use Confluence heading markup (h2., h3.)
-- Output Table Schema must be a proper Confluence table (||Header|| style)
-- Code/SQL in fenced code blocks
-- No AI disclaimers
-- Use only repo content, no invented functionality
+- Use Confluence heading markup (h2., h3.) for headings.
+- Output Table Schema must be a proper Confluence table (||Header|| style).
+- Code/SQL in fenced code blocks.
+- No AI disclaimers or commentary.
+- Use only repo content, no invented functionality.
+- Keep terminology consistent with repo and DDL, but expand definitions for clarity.
 
 Inputs:
 {repo_files_content}
