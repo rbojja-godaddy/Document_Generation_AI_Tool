@@ -1,7 +1,7 @@
 # Document Generation AI Tool
 
 This tool generates Confluence-ready documentation for a repository using **Claude via GoCaaS**. It analyzes source files, extracts data lineage, table schemas then creates or updates the corresponding Confluence page.
----
+
 ## Features
 
 - Generates a full data engineering documentation for repo source files.
