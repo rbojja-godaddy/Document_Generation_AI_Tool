@@ -32,7 +32,7 @@ CONFLUENCE_SPACE_KEY=YOUR_SPACE_KEY
 CONFLUENCE_EMAIL=YOUR_EMAIL
 CONFLUENCE_API_TOKEN=YOUR_API_TOKEN
 ```
-##Usage
+## Usage
 
 ```
 python generate_doc.py "/path/to/your/repo/src/*" --title "Your_Confluence_Page_Title
