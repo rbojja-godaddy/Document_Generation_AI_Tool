@@ -34,7 +34,8 @@ CONFLUENCE_API_TOKEN=YOUR_API_TOKEN
 ```
 ##Usage
 
-```python generate_doc.py "/path/to/your/repo/src/*" --title "Your_Confluence_Page_Title"
+```
+python generate_doc.py "/path/to/your/repo/src/*" --title "Your_Confluence_Page_Title
 ```
 
 
