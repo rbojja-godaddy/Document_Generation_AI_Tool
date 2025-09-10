@@ -102,6 +102,7 @@ Analyze the provided repository files and produce a Confluence-ready document wi
 7. Error Handling & Logging – describe handling of failures and logging.
 8. Do NOT include data lineage in Output Table Schema; data lineage goes in its own section.
 9. Do not include formatting rules in response_content
+10. Data Validation & Dex Checks – list and describe any data quality checks, validations, or dex check rules implemented in the repo.
 
 Formatting rules:
 - Use Confluence heading markup (h2., h3.) for headings.
