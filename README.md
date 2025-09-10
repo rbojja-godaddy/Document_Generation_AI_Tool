@@ -6,7 +6,6 @@ This tool generates Confluence-ready documentation for a repository using **Clau
 
 - Generates a full data engineering documentation for repo source files.
 - Extracts input tables, output table schemas, data lineage, dependencies, and error handling.
-- Generates Data Flow Diagram in Graphviz DOT format and embeds as PNG in Confluence.
 - Fully automated Confluence page creation or update.
 - Uses only repo content; does not invent functionality.
 
