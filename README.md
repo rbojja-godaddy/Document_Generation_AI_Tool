@@ -18,7 +18,7 @@ This tool generates Confluence-ready documentation for a repository using **Clau
 ```bash
 pip install -r requirements.txt
 
-- Create a .env file in the project root with the following variables:
+## Create a .env file in the project root with the following variables:
 
 ```bash
 # GoCaaS (Claude) configuration
