@@ -17,3 +17,18 @@ This tool generates Confluence-ready documentation for a repository using **Clau
 
 ```bash
 pip install -r requirements.txt
+
+- Create a .env file in the project root with the following variables:
+
+```bash
+# GoCaaS (Claude) configuration
+GOCAAS_ENV=prod
+GOCAAS_JWT=YOUR_GOCAAS_JWT
+
+# Confluence API configuration
+CONFLUENCE_BASE_URL=https://your-domain.atlassian.net/wiki
+CONFLUENCE_SPACE_KEY=YOUR_SPACE_KEY
+CONFLUENCE_EMAIL=YOUR_EMAIL
+CONFLUENCE_API_TOKEN=YOUR_API_TOKEN
+
+
