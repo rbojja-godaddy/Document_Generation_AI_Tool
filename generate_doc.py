@@ -27,22 +27,49 @@ def format_for_confluence(text: str) -> str:
     Formats text for Confluence wiki markup:
     - Bold headings (h2., h3.)
     - Clean up table syntax for Confluence rendering
+    - Promote accidental header-like rows into Confluence headers
+    - Sanitize forbidden macro-like tokens such as {column}, "column", <column>
     """
+
+    def clean_cell(cell: str) -> str:
+        import html
+        cell = html.unescape(cell)
+        cell = cell.strip()
+        while cell.startswith('"') or cell.startswith("'"):
+            cell = cell[1:].strip()
+        while cell.endswith('"') or cell.endswith("'"):
+            cell = cell[:-1].strip()
+        cell = re.sub(r'\s+', ' ', cell)
+        return cell
+
+    def is_header_like(cells):
+        return all(re.match(r"^[A-Z][A-Za-z0-9 _/()-]*$", c) for c in cells)
+
     # Bold headings
     text = re.sub(r'^(h[23]\.\s*)(.+)$', r'\1*\2*', text, flags=re.MULTILINE)
 
-    def fix_table_row(row):
-        cells = [cell.strip() for cell in row.strip('|').split('|')]
-        return '|| ' + ' || '.join(cells)
-
     lines = text.splitlines()
     for i, line in enumerate(lines):
-        if line.startswith('||'):  # header row
-            lines[i] = fix_table_row(line)
-        elif line.startswith('|') and not line.startswith('||'):  # normal row
-            cells = [cell.strip() for cell in line.strip('|').split('|')]
-            lines[i] = '| ' + ' | '.join(cells)
-    return '\n'.join(lines)
+        if line.startswith('||'):
+            cells = [clean_cell(c) for c in line.strip('|').split('|')]
+            lines[i] = '|| ' + ' || '.join(cells)
+        elif line.startswith('|') and not line.startswith('||'):
+            cells = [clean_cell(c) for c in line.strip('|').split('|')]
+            if is_header_like(cells):
+                lines[i] = '|| ' + ' || '.join(cells)
+            else:
+                lines[i] = '| ' + ' | '.join(cells)
+
+    text = '\n'.join(lines)
+
+    # 🚨 Extra sanitization: prevent Confluence from seeing 'column' as a macro
+    text = re.sub(r'\{[Cc]olumn\}', 'COLUMN', text)  # {column} → COLUMN
+    text = re.sub(r'"[Cc]olumn"', 'COLUMN', text)    # "column" → COLUMN
+    text = re.sub(r"'[Cc]olumn'", 'COLUMN', text)    # 'column' → COLUMN
+    text = re.sub(r'<[Cc]olumn>', 'COLUMN', text)    # <column> → COLUMN
+    text = re.sub(r'\b[Cc]olumn\b', 'COLUMN', text)  # standalone → uppercase safe
+
+    return text
 
 
 # === Main function ===
@@ -75,11 +102,14 @@ def main():
         if p.is_dir():
             all_files.extend(p.rglob('*.*'))
 
+    # Sort files deterministically
+    all_files = sorted([f for f in all_files if f.is_file()])
+
     print(f"📂 Total files found: {len(all_files)}")
 
     repo_files_content = "\n\n".join(
         f"--- FILE: {f} ---\n{f.read_text(encoding='utf-8')}"
-        for f in all_files if f.is_file()
+        for f in all_files
     )
 
     # === Step 2: Build prompt ===
@@ -89,7 +119,7 @@ Analyze the provided repository files and produce a Confluence-ready document wi
 
 1. Process Overview – 2–4 paragraphs summarizing purpose, data flow, main logic, and outputs.
 2. Detailed Steps – ordered list of processing logic, SQL transformations, Python functions, dependencies, and business rules.
-3. Input Tables – Present as a bulleted list in this format: * database.tablename
+3. Input Tables – Present as a bulleted list in this format: * database.tablename. 
     - One table per line, starting with "* ".
     - Remove single quotes around input tables.
     - Do not include this string "Database.TableName" in the list.
@@ -124,7 +154,9 @@ Inputs:
         is_private=False,
         provider_options={
             "model": "claude-3-sonnet-20240229-v1:0",
-            "max_tokens": 4000
+            "max_tokens": 4000,
+            "temperature": 0,
+            "top_p": 1
         }
     )
 
